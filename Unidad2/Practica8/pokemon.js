@@ -47,3 +47,50 @@ fetch(urlPokemonIndividual)
 
     });
 
+fetch(urlPokemonListado)
+    .then(respuesta => {
+        console.log("Respuesta recibida: 1", respuesta);
+        return respuesta.json();
+    })
+    .then(pokemonL => {
+        const urlPokemon = pokemonL.results[0].url;
+
+        return fetch(urlPokemon);
+    })
+    .then(respuesta => {
+        console.log("Respuesta del Pokémon:", respuesta);
+        return respuesta.json();
+    })
+    .then(pokemonL => {
+        const nombre = pokemonL.name;
+        const id = pokemonL.id;
+        const tipo = pokemonL.types[0].type.name;
+        const imagen = pokemonL.sprites.front_default;
+        console.log("Nombre pokemon: ", nombre);
+        console.log("Id pokemon: ", id);
+        console.log("Tipo pokemon: ", tipo);
+        console.log("Imagen pokemon: ", imagen);
+        document.body.innerHTML += "<div>";
+        document.body.innerHTML += "<h2>" + nombre + "</h2>";
+        document.body.innerHTML += "<p>Número: " + id + "</p>";
+        document.body.innerHTML += "<p>Tipo: " + tipo + "</p>";
+        document.body.innerHTML += "<img src='" + imagen + "' alt='" + nombre + "'>";
+        document.body.innerHTML += "</div>";
+
+    });
+
+    function obtenerDatos(url){
+
+        fetch(url)
+            .then(respuesta =>{
+                if (respuesta.ok){
+                    console.log("Hola:" , respuesta);
+                    return respuesta.json();
+                }else{
+                    console.log("Respuesta erronea");
+                }
+
+            })
+
+    }
+    obtenerDatos(urlPokemonIndividual)
