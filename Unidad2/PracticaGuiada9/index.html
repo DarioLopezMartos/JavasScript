@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Catálogo de cafés</title>
+  <script src="cafe.js" defer></script>
+</head>
+<body>
+  <main>
+    <h1>Catálogo de cafés</h1>
+    <form id="formulario-cafe">
+      <label for="id-cafe">Número del café</label>
+      <input id="id-cafe" name="id" type="number" min="1" step="1" value="2" required>
+      <button type="submit">Buscar café</button>
+    </form>
+    <button id="cargar-ejemplo" type="button">Cargar el café de las prácticas 7 y 8</button>
+    <p id="estado" role="status" aria-live="polite"></p>
+    <section id="ficha-cafe" aria-live="polite"></section>
+  </main>
+</body>
+</html>
