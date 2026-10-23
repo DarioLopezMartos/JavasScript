@@ -11,14 +11,12 @@ body {
     font-family: Arial, sans-serif;
 }
 
-.pagina {
-    max-width: 1200px;
-    margin: auto;
-}
-
 /* Grid de la página */
 
 .pagina {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
     display: grid;
     grid-template-columns: 2fr 1fr;
     grid-template-areas:
@@ -26,7 +24,6 @@ body {
         "contenido lateral"
         "pie pie";
     gap: 20px;
-    padding: 20px;
 }
 
 .cabecera {
