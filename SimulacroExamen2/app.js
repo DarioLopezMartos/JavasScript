@@ -1,57 +1,96 @@
-const url = "https://jsonplaceholder.typicode.com/posts?_limit=20";
+const URL_API = "https://jsonplaceholder.typicode.com/posts?_limit=20";
 
+// Guardamos todas las publicaciones recibidas
+let publicaciones = [];
 
-//document.body.innerHTML = "<h1>Catálogo de cafés</h1><p>Cargando...</p>";
-
-const usuarios = [];
-console.log("1", usuarios)
-fetch(url)
-    .then(respuesta => {
-        console.log("Respuesta:", respuesta);
-        return respuesta.json();
-
-    })
-    .then(usuario => {
-
-        for (let i = 0; i < 20; i++) {
-            //console.log("UserID", usuario[i].userId);
-            //console.log("ID", usuario[i].id);
-            //console.log("Titulo", usuario[i].title);
-            // console.log("Caracteristicas", usuario[i].body);
-
-            usuarios.push(usuario[i]);
-        }
-    });
-
-console.log("3", usuarios)
-
+// Elementos del HTML
 const formulario = document.getElementById("formulario-busqueda");
-
-if (formulario !== null) {
-    formulario.addEventListener("submit", evento => {
-        evento.preventDefault();
-
-        console.log("Se ha enviado el formulario");
-    });
-}
-
-const botones = document.getElementsByTagName("button");
-const campo = document.getElementById("busqueda");
+const busqueda = document.getElementById("busqueda");
+const estado = document.getElementById("estado");
 const resultados = document.getElementById("resultados");
 
-if (botones.length > 0) {
-    botones[0].addEventListener("click", () => {
-        console.log("Se ha pulsado el botón");
+// Carga las publicaciones de la API
+async function cargarPublicaciones() {
+    estado.textContent = "Cargando publicaciones...";
 
-        resultados.innerHTML = "";
+    try {
+        const respuesta = await fetch(URL_API);
 
-        usuarios.forEach(usuario => {
-            if (usuario.title == campo.value) {
-                resultados.innerHTML += "<li>" + usuario.title + "</li>";
-            }else{
-                resultados.innerHTML += "<li> No se ha encontrado ninguno </li>"
-            }
-        });
+        // Comprobamos si la respuesta ha sido correcta
+        if (!respuesta.ok) {
+            throw new Error("Error al obtener las publicaciones");
+        }
+
+        // Convertimos la respuesta a JSON
+        publicaciones = await respuesta.json();
+
+        estado.textContent = "Publicaciones cargadas correctamente.";
+
+        // Mostramos todas las publicaciones
+        mostrarPublicaciones(publicaciones);
+
+    } catch (error) {
+        estado.textContent = "No se pudieron cargar las publicaciones.";
+        console.error(error);
+
+        // Dejamos la lista vacía si ocurre un error
+        publicaciones = [];
+        mostrarPublicaciones(publicaciones);
+    }
+}
+
+// Muestra las publicaciones recibidas en la lista
+function mostrarPublicaciones(lista) {
+    // Limpiamos los resultados anteriores
+    resultados.innerHTML = "";
+
+    if (lista.length === 0) {
+        const elemento = document.createElement("li");
+        elemento.textContent = "No hay publicaciones que mostrar.";
+        resultados.appendChild(elemento);
+        return;
+    }
+
+    // Creamos un elemento para cada publicación
+    lista.forEach(publicacion => {
+        const elemento = document.createElement("li");
+        const titulo = document.createElement("h2");
+        const texto = document.createElement("p");
+
+        titulo.textContent = publicacion.title;
+        texto.textContent = publicacion.body;
+
+        elemento.appendChild(titulo);
+        elemento.appendChild(texto);
+
+        resultados.appendChild(elemento);
     });
 }
 
+// Busca publicaciones por título
+function buscarPublicaciones(texto) {
+    const textoBusqueda = texto.toLowerCase().trim();
+
+    // Si el campo está vacío, mostramos todas
+    if (textoBusqueda === "") {
+        mostrarPublicaciones(publicaciones);
+        return;
+    }
+
+    // Filtramos los títulos ignorando mayúsculas y minúsculas
+    const publicacionesFiltradas = publicaciones.filter(publicacion =>
+        publicacion.title.toLowerCase().includes(textoBusqueda)
+    );
+
+    mostrarPublicaciones(publicacionesFiltradas);
+}
+
+// Evitamos que el formulario recargue la página
+formulario.addEventListener("submit", function(evento) {
+    evento.preventDefault();
+
+    buscarPublicaciones(busqueda.value);
+});
+
+// Cargamos las publicaciones al abrir la página
+cargarPublicaciones();
