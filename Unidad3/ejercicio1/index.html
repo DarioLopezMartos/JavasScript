@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lectura de texto con voz</title>
+</head>
+
+<body>
+    <h1>Asistente de voz</h1>
+
+    <p id="textoPrincipal" style="font-size: 24px;">
+        Hola. Puedes utilizar los comandos de voz para cambiar esta página.
+    </p>
+
+    <button id="iniciarEscucha" type="button">Iniciar escucha</button>
+    <button id="detenerEscucha" type="button">Detener escucha</button>
+
+    <p>Último comando: <span id="ultimoComando">Ninguno</span></p>
+    <p id="estado" role="status" aria-live="polite">Inactivo.</p>
+
+    <p id="respuesta" role="status" aria-live="polite"></p>
+
+    <hr>
+
+    <button id="masGrande" type="button">Más grande</button>
+    <button id="masPequeno" type="button">Más pequeño</button>
+    <button id="modoOscuro" type="button">Modo oscuro</button>
+    <button id="modoClaro" type="button">Modo claro</button>
+
+    <hr>
+
+    <label for="texto">Texto que se leerá:</label>
+    <textarea id="texto" rows="4" cols="50">Hola. Esta página puede leer texto en voz alta.</textarea>
+
+    <p>
+        <label for="idioma">Idioma:</label>
+        <select id="idioma">
+            <option value="es-ES">Español</option>
+            <option value="en-US">Inglés</option>
+        </select>
+    </p>
+
+    <button id="hablar" type="button">Leer texto</button>
+    <button id="detener" type="button">Detener</button>
+
+    <p id="estadoLectura" role="status" aria-live="polite">Preparado.</p>
+
+    <script src="lectura.js"></script>
+</body>
+
+</html>
