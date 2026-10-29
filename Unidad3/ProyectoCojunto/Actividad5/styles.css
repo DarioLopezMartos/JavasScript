@@ -1,0 +1,77 @@
+body {
+  margin: 0;
+  padding: 1rem;
+  background: #1a1a1a;
+  color: white;
+  font-family: sans-serif;
+  text-align: center;
+}
+
+
+#caja{
+    margin: 2em;
+    padding: 2em;
+    background-color: grey;
+    border: solid 2px black;
+    border-radius: 13px;
+}
+
+
+button {
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+
+#estado { min-height: 1.5em; }
+
+
+#mensaje { min-height: 1.5em; font-weight: bold; }
+
+
+video {
+  width: 100%;
+  height: 100%;
+  background: #333;
+}
+
+
+#contenedorVideo {
+  position: relative;
+  width: min(640px, 100%);
+  aspect-ratio: 4 / 3;
+  margin: 1rem auto;
+  background: #333;
+}
+
+
+#botonDibujado {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 20%;
+  height: 12%;
+  border: 2px solid white;
+  border-radius: 6px;
+  background: #087f5b;
+  color: white;
+}
+#contenedorVideo {
+  position: relative;
+  width: min(640px, 100%);
+  aspect-ratio: 4 / 3;
+  margin: 1rem auto;
+  background: #333;
+}
+
+#canvasPuntos {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+
+#botonDibujado.pulsado { background: #c92a2a; }

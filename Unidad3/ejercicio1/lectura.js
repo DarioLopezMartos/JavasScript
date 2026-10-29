@@ -1,11 +1,11 @@
-
- // Referencias a los elementos del HTML que se van a leer o modificar.
+// Elementos originales para leer texto
 const texto = document.getElementById("texto");
 const idioma = document.getElementById("idioma");
 const estado = document.getElementById("estado");
 const hablar = document.getElementById("hablar");
 const detener = document.getElementById("detener");
 
+// Elementos añadidos para el asistente de voz
 const textoPrincipal = document.getElementById("textoPrincipal");
 const ultimoComando = document.getElementById("ultimoComando");
 const iniciarEscucha = document.getElementById("iniciarEscucha");
@@ -13,27 +13,23 @@ const detenerEscucha = document.getElementById("detenerEscucha");
 const respuesta = document.getElementById("respuesta");
 const estadoLectura = document.getElementById("estadoLectura");
 
+// Botones para modificar la página
 const masGrande = document.getElementById("masGrande");
 const masPequeno = document.getElementById("masPequeno");
 const modoOscuro = document.getElementById("modoOscuro");
 const modoClaro = document.getElementById("modoClaro");
 
-// Se guarda el tamaño inicial del texto principal.
+// Variables del asistente
 let tamanoTexto = 24;
-
-// Se comprueba si el navegador admite el reconocimiento de voz.
-const Reconocimiento =
-    window.SpeechRecognition || window.webkitSpeechRecognition;
-
+const Reconocimiento = window.SpeechRecognition || window.webkitSpeechRecognition;
 let reconocimiento = null;
 let errorReconocimiento = false;
 
-// Muestra una respuesta escrita y la lee si SpeechSynthesis está disponible.
+// Función para mostrar una respuesta escrita y decirla en voz alta
 function responder(mensaje) {
     respuesta.textContent = mensaje;
 
-    if ("speechSynthesis" in window &&
-        "SpeechSynthesisUtterance" in window) {
+    if ("speechSynthesis" in window) {
         window.speechSynthesis.cancel();
 
         const voz = new SpeechSynthesisUtterance(mensaje);
@@ -43,189 +39,180 @@ function responder(mensaje) {
     }
 }
 
-// Ejecuta el comando recibido, tanto por voz como mediante los botones.
+// Función para interpretar los comandos de voz
 function ejecutarComando(comando) {
-    // Se convierte el comando a minúsculas y se eliminan espacios sobrantes.
-    comando = comando.toLowerCase().trim();
+    const frase = comando.toLowerCase().trim();
 
-    // Comando "más grande": aumenta el tamaño del texto principal.
-    if (comando.includes("más grande") || comando.includes("mas grande")) {
+    // Comando: aumentar el tamaño del texto
+    if (frase.includes("más grande") || frase.includes("mas grande")) {
         tamanoTexto += 4;
         textoPrincipal.style.fontSize = tamanoTexto + "px";
         responder("He aumentado el tamaño del texto.");
     }
-    // Comando "más pequeño": reduce el tamaño del texto principal.
-    else if (comando.includes("más pequeño") || comando.includes("mas pequeño")) {
+
+    // Comando: reducir el tamaño del texto
+    else if (frase.includes("más pequeño") || frase.includes("mas pequeño")) {
         tamanoTexto = Math.max(8, tamanoTexto - 4);
         textoPrincipal.style.fontSize = tamanoTexto + "px";
         responder("He reducido el tamaño del texto.");
     }
-    // Comando "modo oscuro": cambia el fondo y el color del texto.
-    else if (comando.includes("modo oscuro")) {
+
+    // Comando: activar el modo oscuro
+    else if (frase.includes("modo oscuro")) {
         document.body.style.backgroundColor = "black";
         document.body.style.color = "white";
-        responder("Modo oscuro activado.");
+        responder("Has activado el modo oscuro.");
     }
-    // Comando "modo claro": restaura el fondo y el color del texto.
-    else if (comando.includes("modo claro")) {
+
+    // Comando: activar el modo claro
+    else if (frase.includes("modo claro")) {
         document.body.style.backgroundColor = "white";
         document.body.style.color = "black";
-        responder("Modo claro activado.");
-    } else {
-        // Una frase desconocida no modifica el aspecto de la página.
-        responder("No he reconocido ese comando.");
+        responder("Has activado el modo claro.");
+    }
+
+    // Si la frase no coincide con ningún comando
+    else {
+        responder("No he reconocido ese comando. Prueba con más grande, más pequeño, modo oscuro o modo claro.");
     }
 }
 
-// Se comprueba si el navegador admite el reconocimiento de voz.
+// Comprobar si el navegador admite el reconocimiento de voz
 if (!Reconocimiento) {
-    estado.textContent = "Error: el navegador no admite el reconocimiento de voz.";
+    estado.textContent = "Error: este navegador no admite el reconocimiento de voz.";
     iniciarEscucha.disabled = true;
+    detenerEscucha.disabled = true;
 } else {
+    // Crear el reconocimiento de voz
     reconocimiento = new Reconocimiento();
-    reconocimiento.lang = "es-ES";
+
+    reconocimiento.lang = idioma.value;
     reconocimiento.continuous = false;
     reconocimiento.interimResults = false;
 
-    // Se inicia la escucha al pulsar el botón.
+    // Iniciar la escucha
     iniciarEscucha.addEventListener("click", () => {
         try {
+            errorReconocimiento = false;
+            reconocimiento.lang = idioma.value;
             reconocimiento.start();
         } catch (error) {
-            estado.textContent = "Error: no se pudo iniciar la escucha.";
+            estado.textContent = "No se pudo iniciar la escucha. Inténtalo de nuevo.";
         }
     });
 
-    // Se informa cuando comienza la escucha.
+    // Detener la escucha
+    detenerEscucha.addEventListener("click", () => {
+        try {
+            reconocimiento.stop();
+            estado.textContent = "Inactivo.";
+        } catch (error) {
+            estado.textContent = "No se pudo detener la escucha.";
+        }
+    });
+
+    // Cuando comienza la escucha
     reconocimiento.onstart = () => {
-        errorReconocimiento = false;
         estado.textContent = "Escuchando...";
     };
 
-    // Se procesa el comando reconocido.
+    // Cuando se reconoce una frase
     reconocimiento.onresult = (evento) => {
-        const comando = evento.results[0][0].transcript
-            .toLowerCase()
-            .trim();
+        const comando = evento.results[0][0].transcript;
 
         ultimoComando.textContent = comando;
-
         ejecutarComando(comando);
     };
 
-    // Se actualiza el estado cuando termina la escucha.
+    // Cuando termina la escucha
     reconocimiento.onend = () => {
-        // No se sobrescribe un mensaje de error.
         if (!errorReconocimiento) {
             estado.textContent = "Inactivo.";
         }
     };
 
-    // Se informa de los errores del reconocimiento.
+    // Gestionar los errores del reconocimiento
     reconocimiento.onerror = (evento) => {
         errorReconocimiento = true;
 
         if (evento.error === "not-allowed" ||
             evento.error === "service-not-allowed") {
-            estado.textContent = "Error: has denegado el permiso del micrófono.";
+            estado.textContent = "Error: debes permitir el acceso al micrófono.";
         } else if (evento.error === "no-speech") {
-            estado.textContent = "No se ha detectado habla. Inténtalo de nuevo.";
+            estado.textContent = "No se ha detectado ninguna voz. Inténtalo de nuevo.";
+        } else if (evento.error === "audio-capture") {
+            estado.textContent = "Error: no se ha encontrado un micrófono disponible.";
         } else {
-            estado.textContent = "Error de reconocimiento: " + evento.error;
+            estado.textContent = "Se ha producido un error al reconocer la voz.";
         }
     };
-
-    // Se detiene la escucha al pulsar el botón.
-    detenerEscucha.addEventListener("click", () => {
-        try {
-            reconocimiento.stop();
-        } catch (error) {
-            estado.textContent = "Inactivo.";
-        }
-    });
 }
 
-// Botón alternativo para aumentar el tamaño del texto.
+// Controles alternativos para aumentar el tamaño del texto
 masGrande.addEventListener("click", () => {
     tamanoTexto += 4;
     textoPrincipal.style.fontSize = tamanoTexto + "px";
     responder("He aumentado el tamaño del texto.");
 });
 
-// Botón alternativo para reducir el tamaño del texto.
+// Control alternativo para reducir el tamaño del texto
 masPequeno.addEventListener("click", () => {
     tamanoTexto = Math.max(8, tamanoTexto - 4);
     textoPrincipal.style.fontSize = tamanoTexto + "px";
     responder("He reducido el tamaño del texto.");
 });
 
-// Botón alternativo para activar el modo oscuro.
+// Control alternativo para activar el modo oscuro
 modoOscuro.addEventListener("click", () => {
     document.body.style.backgroundColor = "black";
     document.body.style.color = "white";
-    responder("Modo oscuro activado.");
+    responder("Has activado el modo oscuro.");
 });
 
-// Botón alternativo para activar el modo claro.
+// Control alternativo para activar el modo claro
 modoClaro.addEventListener("click", () => {
     document.body.style.backgroundColor = "white";
     document.body.style.color = "black";
-    responder("Modo claro activado.");
+    responder("Has activado el modo claro.");
 });
 
-// Se comprueba que el navegador dispone de las dos piezas necesarias:
-// speechSynthesis (el sintetizador que reproduce) y
-// SpeechSynthesisUtterance (el mensaje que se le entrega para leer).
+// Comprobar si el navegador admite la lectura de texto
 if (!("speechSynthesis" in window) ||
-    !("SpeechSynthesisUtterance" in window)) {
-
-    // Si falta alguna, se informa y se desactivan los botones de lectura.
-    estadoLectura.textContent = "Este navegador no admite la síntesis de voz.";
+    typeof SpeechSynthesisUtterance === "undefined") {
+    estadoLectura.textContent = "Error: este navegador no admite la lectura de texto.";
     hablar.disabled = true;
     detener.disabled = true;
-
 } else {
-    // Botón "Leer texto".
+    // Leer el texto escrito por el usuario
     hablar.addEventListener("click", () => {
-        // Se toma el contenido del textarea sin espacios al principio ni al final.
         const mensaje = texto.value.trim();
 
-        // Si está vacío no hay nada que leer: se avisa y se sale de la función.
-        if (!mensaje) {
-            estadoLectura.textContent = "Escribe un texto antes de iniciar la lectura.";
+        if (mensaje === "") {
+            estadoLectura.textContent = "Escribe un texto antes de leerlo.";
             return;
         }
 
-        // Cancela una lectura anterior para evitar que se acumulen mensajes.
         window.speechSynthesis.cancel();
 
-        // Se crea el mensaje que se va a pronunciar, con el texto escrito.
-        const utterance = new SpeechSynthesisUtterance(mensaje);
+        const voz = new SpeechSynthesisUtterance(mensaje);
+        voz.lang = idioma.value;
 
-        // Se indica el idioma elegido en el desplegable.
-        utterance.lang = idioma.value;
-
-        // Cuando empieza a sonar la voz.
-        utterance.onstart = () => {
-            estadoLectura.textContent = "Leyendo el texto...";
+        voz.onstart = () => {
+            estadoLectura.textContent = "Leyendo texto...";
         };
 
-        // Cuando termina de leer todo el texto.
-        utterance.onend = () => {
+        voz.onend = () => {
             estadoLectura.textContent = "Lectura finalizada.";
         };
 
-        // Si algo falla durante la lectura.
-        utterance.onerror = (evento) => {
-            estadoLectura.textContent =
-                "No se pudo completar la lectura: " + evento.error;
+        voz.onerror = () => {
+            estadoLectura.textContent = "Error al reproducir la lectura.";
         };
 
-        // Se entrega el mensaje al sintetizador, que empieza a leerlo.
-        window.speechSynthesis.speak(utterance);
+        window.speechSynthesis.speak(voz);
     });
 
-    // Botón "Detener": cancela la lectura en curso y vacía la cola de mensajes.
+    // Detener la lectura de texto
     detener.addEventListener("click", () => {
         window.speechSynthesis.cancel();
         estadoLectura.textContent = "Lectura detenida.";

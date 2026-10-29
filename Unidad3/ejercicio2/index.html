@@ -12,10 +12,29 @@
     <!-- Botón para comenzar a escuchar los comandos de voz. -->
     <button id="iniciarEscucha" type="button">Hablar</button>
 
-    <p id="estado">Inactivo.</p>
+    <p id="estado" role="status" aria-live="polite">Inactivo.</p>
+
+    <!-- Muestra la última frase reconocida. -->
+    <p>Último comando: <span id="ultimoComando">Ninguno</span></p>
 
     <!-- Aquí se muestran los productos de la compra. -->
+    <h2>Productos</h2>
     <ul id="listaCompra"></ul>
+
+    <!-- Alternativa para añadir productos sin utilizar la voz. -->
+    <h2>Añadir manualmente</h2>
+
+    <form id="formularioProducto">
+        <label for="producto">Nombre del producto:</label>
+        <input type="text" id="producto" placeholder="Ej. leche">
+        <button type="submit">Añadir producto</button>
+    </form>
+
+    <!-- Permite vaciar la lista sin utilizar la voz. -->
+    <button id="vaciarLista" type="button">Vaciar lista</button>
+
+    <!-- Aquí se muestran las respuestas de la aplicación. -->
+    <p id="respuesta" role="status" aria-live="polite"></p>
 
     <script src="lista.js"></script>
 </body>
