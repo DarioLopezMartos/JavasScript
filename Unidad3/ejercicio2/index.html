@@ -9,32 +9,32 @@
 <body>
     <h1>Lista de la compra</h1>
 
-    <!-- Botón para comenzar a escuchar los comandos de voz. -->
+    <!-- Botón para comenzar a escuchar. -->
     <button id="iniciarEscucha" type="button">Hablar</button>
 
-    <p id="estado" role="status" aria-live="polite">Inactivo.</p>
+    <p id="estado">Inactivo.</p>
 
-    <!-- Muestra la última frase reconocida. -->
+    <!-- Último comando reconocido. -->
     <p>Último comando: <span id="ultimoComando">Ninguno</span></p>
 
-    <!-- Aquí se muestran los productos de la compra. -->
+    <!-- Lista de productos. -->
     <h2>Productos</h2>
     <ul id="listaCompra"></ul>
 
-    <!-- Alternativa para añadir productos sin utilizar la voz. -->
+    <!-- Alternativa para añadir productos sin voz. -->
     <h2>Añadir manualmente</h2>
 
     <form id="formularioProducto">
         <label for="producto">Nombre del producto:</label>
-        <input type="text" id="producto" placeholder="Ej. leche">
+        <input type="text" id="producto" placeholder="Ej. leche" required>
         <button type="submit">Añadir producto</button>
     </form>
 
-    <!-- Permite vaciar la lista sin utilizar la voz. -->
+    <!-- Botón para vaciar la lista. -->
     <button id="vaciarLista" type="button">Vaciar lista</button>
 
-    <!-- Aquí se muestran las respuestas de la aplicación. -->
-    <p id="respuesta" role="status" aria-live="polite"></p>
+    <!-- Respuesta de la aplicación. -->
+    <p id="respuesta"></p>
 
     <script src="lista.js"></script>
 </body>
