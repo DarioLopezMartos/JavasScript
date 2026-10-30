@@ -7,8 +7,7 @@ const formularioProducto = document.getElementById("formularioProducto");
 const producto = document.getElementById("producto");
 const botonVaciar = document.getElementById("vaciarLista");
 
-// Recuperamos los productos guardados.
-// Si no hay productos, creamos una lista vacía.
+// Recuperamos los productos guardados o creamos un array vacío.
 let productos = JSON.parse(localStorage.getItem("productos")) || [];
 
 // Comprobamos si el navegador admite el reconocimiento de voz.
@@ -18,8 +17,7 @@ const Reconocimiento =
 let reconocimiento = null;
 let errorReconocimiento = false;
 
-
-// Mostramos los productos en la página.
+// Mostramos los productos en pantalla.
 function mostrarProductos() {
     listaCompra.innerHTML = "";
 
@@ -28,13 +26,11 @@ function mostrarProductos() {
 
         elemento.textContent = productos[i] + " ";
 
-        // Creamos un botón para eliminar el producto.
+        // Botón para eliminar un producto.
         const botonEliminar = document.createElement("button");
-
         botonEliminar.textContent = "Eliminar";
         botonEliminar.type = "button";
 
-        // Guardamos el nombre del producto que queremos eliminar.
         const nombreProducto = productos[i];
 
         botonEliminar.addEventListener("click", function () {
@@ -46,23 +42,16 @@ function mostrarProductos() {
     }
 }
 
-
-// Guardamos los productos para conservarlos al recargar la página.
+// Guardamos los productos para conservarlos al recargar.
 function guardarProductos() {
     localStorage.setItem("productos", JSON.stringify(productos));
 }
 
-
-// Mostramos una respuesta escrita y la decimos en voz alta si es posible.
+// Mostramos una respuesta escrita y la decimos en voz alta.
 function responder(mensaje) {
     respuesta.textContent = mensaje;
 
-    if (
-        "speechSynthesis" in window &&
-        typeof SpeechSynthesisUtterance !== "undefined"
-    ) {
-        window.speechSynthesis.cancel();
-
+    if ("speechSynthesis" in window) {
         const voz = new SpeechSynthesisUtterance(mensaje);
         voz.lang = "es-ES";
 
@@ -70,8 +59,7 @@ function responder(mensaje) {
     }
 }
 
-
-// Añadimos un producto a la lista.
+// Añadimos un producto.
 function anadirProducto(nombre) {
     nombre = nombre.trim();
 
@@ -85,17 +73,16 @@ function anadirProducto(nombre) {
     guardarProductos();
     mostrarProductos();
 
-    responder("He añadido " + nombre + ".");
+    responder("He añadido " + nombre);
 }
 
-
-// Eliminamos el primer producto que coincida con el nombre indicado.
+// Quitamos un producto.
 function quitarProducto(nombre) {
     nombre = nombre.trim();
 
     let indice = -1;
 
-    // Buscamos el producto sin distinguir mayúsculas y minúsculas.
+    // Buscamos el producto en la lista.
     for (let i = 0; i < productos.length; i++) {
         if (productos[i].toLowerCase() === nombre.toLowerCase()) {
             indice = i;
@@ -104,48 +91,19 @@ function quitarProducto(nombre) {
     }
 
     if (indice !== -1) {
-        const productoEliminado = productos[indice];
-
         productos.splice(indice, 1);
 
         guardarProductos();
         mostrarProductos();
 
-        responder("He quitado " + productoEliminado + ".");
+        responder("He quitado " + nombre);
     } else {
-        responder("El producto " + nombre + " no está en la lista.");
+        responder("El producto no está en la lista.");
     }
 }
-
-
-// Quitamos un artículo del principio del nombre, si lo tiene.
-// Por ejemplo, "la leche" se convierte en "leche".
-function quitarArticulo(nombre) {
-    if (nombre.indexOf("el ") === 0) {
-        nombre = nombre.substring(3);
-    } else if (nombre.indexOf("la ") === 0) {
-        nombre = nombre.substring(3);
-    } else if (nombre.indexOf("los ") === 0) {
-        nombre = nombre.substring(4);
-    } else if (nombre.indexOf("las ") === 0) {
-        nombre = nombre.substring(4);
-    } else if (nombre.indexOf("un ") === 0) {
-        nombre = nombre.substring(3);
-    } else if (nombre.indexOf("una ") === 0) {
-        nombre = nombre.substring(4);
-    }
-
-    return nombre.trim();
-}
-
 
 // Vaciamos la lista completa.
 function vaciarLista() {
-    if (productos.length === 0) {
-        responder("La lista ya está vacía.");
-        return;
-    }
-
     productos = [];
 
     guardarProductos();
@@ -154,110 +112,55 @@ function vaciarLista() {
     responder("He vaciado la lista de la compra.");
 }
 
-
-// Interpretamos la frase que ha reconocido el navegador.
+// Interpretamos los comandos de voz.
 function interpretarComando(frase) {
     frase = frase.toLowerCase().trim();
 
-    // Comandos para vaciar la lista.
-    if (
-        frase === "vacía la lista" ||
-        frase === "vaciar la lista" ||
-        frase === "vacía la lista de la compra" ||
-        frase === "vaciar lista" ||
-        frase === "borra toda la lista"
-    ) {
+    // Comando para vaciar la lista.
+    if (frase === "vacía la lista") {
         vaciarLista();
     }
 
-    // Comandos para añadir un producto.
-    else if (
-        frase.indexOf("añade ") === 0 ||
-        frase.indexOf("añadir ") === 0 ||
-        frase.indexOf("agrega ") === 0
-    ) {
-        let nombre = "";
-
-        if (frase.indexOf("añade ") === 0) {
-            nombre = frase.substring(6);
-        } else if (frase.indexOf("añadir ") === 0) {
-            nombre = frase.substring(7);
-        } else {
-            nombre = frase.substring(7);
-        }
-
-        nombre = quitarArticulo(nombre);
-
-        if (nombre === "") {
-            responder("No has indicado qué producto quieres añadir.");
-        } else {
-            anadirProducto(nombre);
-        }
+    // Comando para añadir un producto.
+    else if (frase.indexOf("añade ") === 0) {
+        let nombre = frase.substring(6);
+        anadirProducto(nombre);
     }
 
-    // Comandos para eliminar un producto.
-    else if (
-        frase.indexOf("quita ") === 0 ||
-        frase.indexOf("elimina ") === 0 ||
-        frase.indexOf("eliminar ") === 0 ||
-        frase.indexOf("borra ") === 0
-    ) {
-        let nombre = "";
-
-        if (frase.indexOf("quita ") === 0) {
-            nombre = frase.substring(6);
-        } else if (frase.indexOf("elimina ") === 0) {
-            nombre = frase.substring(8);
-        } else if (frase.indexOf("eliminar ") === 0) {
-            nombre = frase.substring(9);
-        } else {
-            nombre = frase.substring(6);
-        }
-
-        nombre = quitarArticulo(nombre);
-
-        if (nombre === "") {
-            responder("No has indicado qué producto quieres quitar.");
-        } else {
-            quitarProducto(nombre);
-        }
+    // Comando para quitar un producto.
+    else if (frase.indexOf("quita ") === 0) {
+        let nombre = frase.substring(6);
+        quitarProducto(nombre);
     }
 
-    // Si no entendemos la frase, no modificamos la lista.
+    // Si no reconocemos el comando, mostramos un mensaje.
     else {
-        responder(
-            "No he entendido la orden. Puedes decir añade leche, quita leche o vacía la lista."
-        );
+        responder("No he entendido la orden.");
     }
 }
-
 
 // Mostramos los productos guardados al abrir la página.
 mostrarProductos();
 
-// Añadimos productos escribiendo en el campo de texto.
+// Alternativa para añadir productos escribiendo.
 formularioProducto.addEventListener("submit", function (evento) {
     evento.preventDefault();
 
     anadirProducto(producto.value);
 
     producto.value = "";
-    producto.focus();
 });
 
-
-// Permitimos vaciar la lista mediante un botón.
+// Botón para vaciar la lista.
 botonVaciar.addEventListener("click", function () {
     vaciarLista();
 });
 
-
 // Comprobamos si el navegador admite el reconocimiento de voz.
 if (!Reconocimiento) {
-    estado.textContent =
-        "Error: este navegador no admite el reconocimiento de voz.";
-
+    estado.textContent = "Este navegador no admite el reconocimiento de voz.";
     iniciarEscucha.disabled = true;
+
 } else {
     reconocimiento = new Reconocimiento();
 
@@ -265,16 +168,16 @@ if (!Reconocimiento) {
     reconocimiento.continuous = false;
     reconocimiento.interimResults = false;
 
-    // Iniciamos la escucha cuando el usuario pulsa el botón.
+    // Iniciamos la escucha al pulsar el botón.
     iniciarEscucha.addEventListener("click", function () {
         try {
             errorReconocimiento = false;
-            estado.textContent = "Preparando el micrófono...";
+            estado.textContent = "Escuchando...";
 
             reconocimiento.start();
+
         } catch (error) {
-            estado.textContent =
-                "No se pudo iniciar la escucha. Inténtalo de nuevo.";
+            estado.textContent = "No se pudo iniciar la escucha.";
         }
     });
 
@@ -283,7 +186,7 @@ if (!Reconocimiento) {
         estado.textContent = "Escuchando...";
     };
 
-    // Cuando se reconoce una frase, la mostramos y la interpretamos.
+    // Recibimos e interpretamos la frase reconocida.
     reconocimiento.onresult = function (evento) {
         const frase = evento.results[0][0].transcript;
 
@@ -292,7 +195,7 @@ if (!Reconocimiento) {
         interpretarComando(frase);
     };
 
-    // Cuando termina la escucha, mostramos el estado correspondiente.
+    // Cuando termina la escucha, actualizamos el estado.
     reconocimiento.onend = function () {
         if (!errorReconocimiento) {
             estado.textContent = "Inactivo.";
@@ -303,21 +206,14 @@ if (!Reconocimiento) {
     reconocimiento.onerror = function (evento) {
         errorReconocimiento = true;
 
-        if (
-            evento.error === "not-allowed" ||
-            evento.error === "service-not-allowed"
-        ) {
-            estado.textContent =
-                "Error: debes permitir el acceso al micrófono.";
+        if (evento.error === "not-allowed") {
+            estado.textContent = "Debes permitir el acceso al micrófono.";
+
         } else if (evento.error === "no-speech") {
-            estado.textContent =
-                "No se ha detectado ninguna voz. Inténtalo de nuevo.";
-        } else if (evento.error === "audio-capture") {
-            estado.textContent =
-                "Error: no se ha encontrado un micrófono disponible.";
+            estado.textContent = "No se ha detectado ninguna voz.";
+
         } else {
-            estado.textContent =
-                "Se ha producido un error al reconocer la voz.";
+            estado.textContent = "Se ha producido un error al reconocer la voz.";
         }
     };
 }
