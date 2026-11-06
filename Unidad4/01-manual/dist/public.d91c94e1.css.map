@@ -1,0 +1,1 @@
+{"mappings":"AAAA;;;;AAIA","sources":["src/Titulo.css"],"sourcesContent":["h1 {\r\n  color: blue;\r\n}\r\n\r\nh2 {\r\n  color: gray;\r\n}"],"names":[],"version":3,"file":"public.d91c94e1.css.map","sourceRoot":"/__parcel_source_root/"}

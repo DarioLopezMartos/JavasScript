@@ -1,0 +1,27 @@
+{
+  "name": "01-manual",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "parcel public/index.html"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "parcel": "^2.16.4"
+  },
+  "allowScripts": {
+    "node-gyp-build-optional-packages@5.2.2": true,
+    "node-gyp-build-optional-packages@5.1.1": true,
+    "@parcel/watcher@2.6.0": true,
+    "@swc/core@1.16.22": true,
+    "lmdb@2.8.5": true,
+    "msgpackr-extract@3.0.7": true
+  }
+}
