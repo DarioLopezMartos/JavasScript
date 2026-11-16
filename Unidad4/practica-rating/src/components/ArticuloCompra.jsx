@@ -1,4 +1,3 @@
-
 function ArticuloCompra({ articulo }) {
 
     return (

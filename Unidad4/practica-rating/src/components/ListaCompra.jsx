@@ -1,4 +1,3 @@
-
 import ArticuloCompra from "./ArticuloCompra";
 
 function ListaCompra({ articulos }) {
