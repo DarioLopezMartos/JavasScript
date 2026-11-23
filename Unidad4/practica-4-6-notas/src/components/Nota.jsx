@@ -31,6 +31,7 @@ const Nota = ({ nota }) => {
             {tieneEtiquetas && (
                 <>
                     <p>Etiquetas:</p>
+                    {/* La etiqueta identifica cada elemento de esta lista dentro de la nota. */}
                     {nota.etiquetas.map((etiqueta) => (
                         <span
                             key={etiqueta}
