@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demostración de WebAR</title>
+
+  <!-- A-Frame crea y representa la escena 3D. -->
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <!-- MindAR añade a A-Frame el seguimiento de imágenes. -->
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <p id="estado" role="status">Preparando la escena…</p>
+
+  <div class="controles">
+    <button id="iniciar" type="button" disabled>Iniciar cámara</button>
+
+   <!--He cambiado cambiar color por cambiar angulo -->
+    <button id="cambiar-angulo" type="button" disabled>Cambiar angulo</button>
+  </div>
+
+  <!--
+    autoStart:false evita solicitar la cámara al cargar la página.
+    La cámara se inicia después de que la persona pulse el botón.
+  -->
+  <a-scene
+    id="escena"
+    mindar-image="
+      imageTargetSrc: https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.5/examples/image-tracking/assets/card-example/card.mind;
+      autoStart: false"
+    color-space="sRGB"
+    renderer="colorManagement: true"
+    vr-mode-ui="enabled: false"
+    device-orientation-permission-ui="enabled: false">
+
+    <!-- MindAR alinea esta entidad con el objetivo número 0 del archivo .mind. -->
+    <a-entity id="objetivo" mindar-image-target="targetIndex: 0">
+      
+    <!-- El cubo pertenece al objetivo: aparece al reconocer la imagen y la sigue. 
+      <a-box
+        id="cubo"
+        position="0 0.2 0"
+        rotation="0 0 0"
+        scale="0.35 0.35 0.35"
+        material="color: #20a4f3">
+      </a-box> -->
+
+    <!-- He usado un modelo de prueba que es un patito de goma, por cambiar el cubo-->
+      <a-gltf-model
+        id="modelo"
+        src="https://cdn.jsdelivr.net/gh/KhronosGroup/glTF-Sample-Models@master/2.0/Duck/glTF-Binary/Duck.glb"
+        position="0 0 0"
+        scale="0.4 0.4 0.4"
+        rotation="0 0 0">
+      </a-gltf-model>
+
+      <!-- El texto también se dibuja en el plano del objetivo. -->
+      <a-text
+        value="¡WebAR funciona!"
+        position="-0.8 0.65 0"
+        color="#ffffff"
+        align="center"
+        width="2">
+      </a-text>
+    </a-entity>
+
+    <!-- MindAR necesita una cámara de A-Frame para representar la escena. -->
+    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+  </a-scene>
+
+  <script src="app.js"></script>
+</body>
+</html>

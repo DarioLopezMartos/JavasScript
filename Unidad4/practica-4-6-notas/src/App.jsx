@@ -1,4 +1,6 @@
+
 import Cabecera from "./components/Cabecera";
+import Resumen from "./components/Resumen";
 import ListaNotas from "./components/ListaNotas";
 import Pie from "./components/Pie";
 import { notas } from "./data/notas";
@@ -11,7 +13,10 @@ function App() {
       {notas.length === 0 ? (
         <p>No tienes notas</p>
       ) : (
-        <ListaNotas notas={notas} />
+        <>
+          <Resumen notas={notas} />
+          <ListaNotas notas={notas} />
+        </>
       )}
 
       <Pie />

@@ -1,7 +1,8 @@
+
 import Nota from "./Nota";
 
 const ListaNotas = ({ notas }) => {
-    const ordenadas = notas.toSorted((a, b) => a.fecha - b.fecha);
+    const ordenadas = [...notas].sort((a, b) => a.fecha - b.fecha);
 
     return (
         <section>

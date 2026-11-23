@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Detección de manos - MediaPipe</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>Detección de manos</h1>
+  <button id="botonInicio">Iniciar cámara</button>
+  <p id="estado" role="status">Pulsa el botón y permite el acceso a la cámara.</p>
+  <p>Posición del índice: <output id="posicionIndice">Sin detectar</output></p>
+  <p id="mensaje" role="status"></p>
+  <div id="caja"></div>
+  <div id="contenedorVideo">
+    <video id="videoCamara" autoplay muted playsinline></video>
+    <canvas id="canvasPuntos"></canvas>
+  </div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
